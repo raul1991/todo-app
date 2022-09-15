@@ -1,0 +1,68 @@
+.NoteModal {
+  background-color: darkslategrey;
+  color: black;
+  padding: 20px;
+  word-wrap: break-word;
+  border-radius: 2px;
+  box-shadow: 2px 2px 3px #999;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.NoteModal-title {
+  font-size: 30px;
+  font-weight: bold;
+  text-align: left;
+  color: #fff;
+}
+
+.NoteModal-note-title {
+  font-size: 30px;
+  font-weight: bold;
+  text-align: left;
+  color: grey;
+  margin-top: 10px;
+}
+
+.NoteModal-input-lg {
+  padding: 10px;
+  font-size: 20px;
+  width: auto;
+}
+
+.NoteModal-description {
+  color: black;
+  background-color: #fff;
+  margin-top: 10px;
+  resize: no;
+}
+
+.NoteModal-footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+}
+
+.btn {
+  font-size: 20px;
+  padding: 10px;
+  color: #fff;
+}
+
+.btn.primary {
+  background-color: #282c34;
+}
+
+.btn.secondary {
+  background-color: darkslategrey;
+}
+
+.NoteModal-footer-btn.btn.secondary {
+  background-color: #fff;
+}
+
+.NoteModal-footer-btn.btn.primary {
+  background-color: darkslategray;
+}
