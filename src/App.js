@@ -4,6 +4,8 @@ import { Note } from "./components/Note/Note";
 import { NoteModal } from "./components/NoteModal/NoteModal";
 import { useEffect, useState } from "react";
 import { ApiClient } from "./api/ApiClient";
+import { SearchBar } from "./components/SearchBar/SearchBar";
+import { InfoMessage } from "./components/Messages/Info/InfoMessage";
 
 function App() {
   const todoAppClient = new ApiClient("http://localhost:8080/todos", "123123");
@@ -51,6 +53,7 @@ function App() {
 
   const [isOpen, setOpen] = useState(false);
 
+  const [filteredNotes, setFilteredNotes] = useState([]);
   const [currentNotes, setNotes] = useState(notes);
   const addNewNote = (title, description) => {
     // saving to the database
@@ -65,28 +68,59 @@ function App() {
 
   useEffect(() => {
     todoAppClient.listTodos().then((res) => {
-      // setNotes((prevNotes) => [
-      //   ...prevNotes,
-      //   { title: res.id, description: res.content },
-      // ]);
-      console.log(res);
+      if (res.length === 0) return;
+      setNotes((prevNotes) => [
+        ...prevNotes,
+        { title: res.id, description: res.content },
+      ]);
     });
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const shouldShowEmptySearchMessage =
+    filteredNotes.length > 0 && filteredNotes[0] === null;
   return (
     <>
       <header className="App-header">
         <p className="App-title">Todo app</p>
-        <div className="App-note-grid">
-          {currentNotes.map((note, index) => (
-            <Note
-              key={`${note.title}.${index}`}
-              title={note.title}
-              description={note.description}
-            />
-          ))}
+        <div className="App-container">
+          <SearchBar
+            onTextChange={(query) => {
+              // remove the null item from the filtered notes if query is empty
+              query === "" && setFilteredNotes([]);
+
+              setFilteredNotes((_) => {
+                const filteredNotes = notes.filter(
+                  (notes) =>
+                    notes.title.indexOf(query) !== -1 ||
+                    notes.description.indexOf(query) !== -1
+                );
+                // if no results are found, add a null item to indicate a no search result found error
+                filteredNotes.length === 0 && filteredNotes.push(null);
+                return filteredNotes;
+              });
+            }}
+          />
+          {shouldShowEmptySearchMessage && (
+            <InfoMessage message={"No notes matched your search"} />
+          )}
+          <div className="App-note-grid">
+            {!shouldShowEmptySearchMessage && filteredNotes.length > 0
+              ? filteredNotes.map((note, index) => (
+                  <Note
+                    key={`${note.title}.${index}`}
+                    title={note.title}
+                    description={note.description}
+                  />
+                ))
+              : currentNotes.map((note, index) => (
+                  <Note
+                    key={`${note.title}.${index}`}
+                    title={note.title}
+                    description={note.description}
+                  />
+                ))}
+          </div>
         </div>
         <button className="AddNote-button" onClick={() => setOpen(true)}>
           +
