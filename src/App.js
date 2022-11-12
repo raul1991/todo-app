@@ -90,7 +90,7 @@ function App() {
               query === "" && setFilteredNotes([]);
 
               setFilteredNotes((_) => {
-                const filteredNotes = notes.filter(
+                const filteredNotes = currentNotes.filter(
                   (notes) =>
                     notes.title.indexOf(query) !== -1 ||
                     notes.description.indexOf(query) !== -1
