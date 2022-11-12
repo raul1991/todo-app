@@ -2,9 +2,11 @@ import logo from "./logo.svg";
 import "./App.css";
 import { Note } from "./components/Note/Note";
 import { NoteModal } from "./components/NoteModal/NoteModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { ApiClient } from "./api/ApiClient";
 
 function App() {
+  const todoAppClient = new ApiClient("http://localhost:8080/todos", "123123");
   const notes = [
     {
       title: "A small story",
@@ -49,8 +51,10 @@ function App() {
 
   const [isOpen, setOpen] = useState(false);
 
-  const [currentNotes] = useState(notes);
+  const [currentNotes, setNotes] = useState(notes);
   const addNewNote = (title, description) => {
+    // saving to the database
+    todoAppClient.saveTodo({ title, description });
     currentNotes.push({ title, description });
     closeModal();
   };
@@ -59,6 +63,18 @@ function App() {
     setOpen(false);
   };
 
+  useEffect(() => {
+    todoAppClient.listTodos().then((res) => {
+      // setNotes((prevNotes) => [
+      //   ...prevNotes,
+      //   { title: res.id, description: res.content },
+      // ]);
+      console.log(res);
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <>
       <header className="App-header">
@@ -66,7 +82,7 @@ function App() {
         <div className="App-note-grid">
           {currentNotes.map((note, index) => (
             <Note
-              key={index}
+              key={`${note.title}.${index}`}
               title={note.title}
               description={note.description}
             />
